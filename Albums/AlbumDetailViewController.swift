@@ -74,13 +74,10 @@ class AlbumDetailViewController: UIViewController {
         }
 
         stackView.addArrangedSubview(imageView)
-        buildLabels(album: album).forEach { stackView.addArrangedSubview($0) }
-
         // Centering text doesn't take effect until added to parent view
-        stackView.arrangedSubviews.forEach {
-            if let label = $0 as? UILabel {
-                label.textAlignment = .center
-            }
+        buildLabels(album: album).forEach {
+            stackView.addArrangedSubview($0)
+            $0.textAlignment = .center
         }
     }
 
