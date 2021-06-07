@@ -81,7 +81,8 @@ class AlbumDetailViewController: UIViewController {
         }
     }
 
-    func labelForText(_ text: String) -> UILabel {
+    func labelForText(_ text: String?) -> UILabel? {
+        guard let text = text else { return nil }
         let result = UILabel()
         result.numberOfLines = 0
         result.lineBreakMode = .byWordWrapping
@@ -90,24 +91,36 @@ class AlbumDetailViewController: UIViewController {
     }
 
     func buildLabels(album: Album) -> [UILabel] {
-        let title = labelForText(album.name)
-        title.font = UIFont.systemFont(ofSize: 34, weight: .semibold)
+        var labels = [UILabel]()
 
-        let artist = labelForText(album.artistName)
-        artist.font = UIFont.systemFont(ofSize: 34)
-        artist.textColor = themeColor
+        if let title = labelForText(album.name) {
+            title.font = UIFont.systemFont(ofSize: 34, weight: .semibold)
+            labels.append(title)
+        }
+
+        if let artist = labelForText(album.artistName) {
+            artist.font = UIFont.systemFont(ofSize: 34)
+            artist.textColor = themeColor
+            labels.append(artist)
+        }
 
         let genreString = album.genres.map({$0.name}).joined(separator: ", ")
-        let genres = labelForText(genreString)
-        genres.font = UIFont.systemFont(ofSize: 15)
+        if let genres = labelForText(genreString) {
+            genres.font = UIFont.systemFont(ofSize: 15)
+            labels.append(genres)
+        }
 
-        let releaseDate = labelForText(album.releaseDate)
-        releaseDate.font = UIFont.systemFont(ofSize: 15)
+        if let label = labelForText(album.releaseDate) {
+            label.font = UIFont.systemFont(ofSize: 15)
+            labels.append(label)
+        }
 
-        let copyright = labelForText(album.copyright)
-        copyright.font = UIFont.italicSystemFont(ofSize: 15)
+        if let copyright = labelForText(album.copyright) {
+            copyright.font = UIFont.italicSystemFont(ofSize: 15)
+            labels.append(copyright)
+        }
 
-        return [title, artist, genres, releaseDate, copyright]
+        return labels
     }
 
     @objc func buttonAction(sender: UIButton) {

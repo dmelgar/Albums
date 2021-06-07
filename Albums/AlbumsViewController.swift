@@ -63,7 +63,7 @@ class AlbumsViewController: UIViewController {
                         self.albums = albums
                         tableView.reloadData()
                     } catch {
-                        self.displayError("Unable to load album data", displayAction: false)
+                        self.displayError("Unable to load album data: \(error)", displayAction: false)
                     }
                 }
                 self.spinner.stopAnimating()

@@ -20,16 +20,17 @@ struct Album: Decodable {
     let artistName: String
     private let artworkUrl100: String
     let genres: [Genre]
-    let releaseDate: String
-    let copyright: String
-    private let url: String
+    let releaseDate: String?
+    let copyright: String?
+    private let url: String?
 
     func idInt() -> Int {
         return Int(id) ?? 0
     }
 
     var iTunesURL: URL? {
-        URL(string: url)
+        guard let url = url else { return nil }
+        return URL(string: url)
     }
 
     var artworkUrl: URL? {
