@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		33057EDF266FDD5B001931CE /* AlbumsProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33057EDE266FDD5B001931CE /* AlbumsProvider.swift */; };
+		33057EE1266FE131001931CE /* AlbumError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33057EE0266FE131001931CE /* AlbumError.swift */; };
 		3321F9C02669C4FC00BBBE1F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3321F9BF2669C4FC00BBBE1F /* AppDelegate.swift */; };
 		3321F9C22669C4FC00BBBE1F /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3321F9C12669C4FC00BBBE1F /* SceneDelegate.swift */; };
 		3321F9C42669C4FC00BBBE1F /* AlbumsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3321F9C32669C4FC00BBBE1F /* AlbumsViewController.swift */; };
@@ -18,6 +20,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		33057EDE266FDD5B001931CE /* AlbumsProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumsProvider.swift; sourceTree = "<group>"; };
+		33057EE0266FE131001931CE /* AlbumError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumError.swift; sourceTree = "<group>"; };
 		3321F9BC2669C4FC00BBBE1F /* Albums.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Albums.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3321F9BF2669C4FC00BBBE1F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3321F9C12669C4FC00BBBE1F /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -69,6 +73,8 @@
 				3321F9D52669CA7D00BBBE1F /* AlbumDetailViewController.swift */,
 				33D1B864266AB4E7000A6852 /* DataModel.swift */,
 				33D1B866266AB53D000A6852 /* UIImage+async.swift */,
+				33057EDE266FDD5B001931CE /* AlbumsProvider.swift */,
+				33057EE0266FE131001931CE /* AlbumError.swift */,
 			);
 			path = Albums;
 			sourceTree = "<group>";
@@ -147,6 +153,8 @@
 				3321F9C42669C4FC00BBBE1F /* AlbumsViewController.swift in Sources */,
 				3321F9D62669CA7D00BBBE1F /* AlbumDetailViewController.swift in Sources */,
 				3321F9C02669C4FC00BBBE1F /* AppDelegate.swift in Sources */,
+				33057EDF266FDD5B001931CE /* AlbumsProvider.swift in Sources */,
+				33057EE1266FE131001931CE /* AlbumError.swift in Sources */,
 				3321F9C22669C4FC00BBBE1F /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

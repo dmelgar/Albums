@@ -44,32 +44,17 @@ class AlbumsViewController: UIViewController {
     }
 
     func loadData(tableView: UITableView) {
-        guard let url = URL(string: "https://rss.itunes.apple.com/api/v1/us/itunes-music/top-songs/all/100/explicit.json") else {
-            displayError(NSLocalizedString("Invalid URL", comment: "Error displayed when invalid URL provided"),
-                         displayAction: false)
-            return
-        }
         spinner.startAnimating()
-        let task = URLSession.shared.dataTask(with: url) { data, response, error in
-            DispatchQueue.main.async {
-                guard error == nil else {
-                    self.displayError("Unable to load album data", displayAction: true)
-                    return
-                }
-                if let data = data {
-                    do {
-                        let result = try JSONDecoder().decode(Message.self, from: data)
-                        let albums = result.feed.results
-                        self.albums = albums
-                        tableView.reloadData()
-                    } catch {
-                        self.displayError("Unable to load album data: \(error)", displayAction: false)
-                    }
-                }
-                self.spinner.stopAnimating()
+        AlbumsProvider.load { albums, error in
+            guard error == nil,
+                  let albums = albums else {
+                self.displayError(NSLocalizedString("Error loading albums. \(error?.localizedDescription ?? "")", comment: "Error message"), displayAction: false)
+                return
             }
+            self.albums = albums
+            tableView.reloadData()
+            self.spinner.stopAnimating()
         }
-        task.resume()
     }
 
     func displayError(_ txt: String, displayAction: Bool) {
