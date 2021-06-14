@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum AlbumError: Error {
+enum ITunesFeedError: Error {
     case badUrl
     case networkError(Error?)
     case parseError(Error)

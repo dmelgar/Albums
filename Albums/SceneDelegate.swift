@@ -19,7 +19,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
 
         let window = UIWindow(windowScene: windowScene)
-        let root = AlbumsViewController()
+        let root = ITunesFeedViewController()
         window.rootViewController = UINavigationController(rootViewController: root)
         window.makeKeyAndVisible()
         self.window = window

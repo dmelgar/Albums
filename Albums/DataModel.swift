@@ -6,11 +6,13 @@
 //
 
 import Foundation
+import UIKit
 
 struct Message: Decodable {
-    let feed:Feed
+    let feed: Feed
 }
 struct Feed: Decodable {
+    let title: String
     let results: [Album]
 }
 
@@ -18,7 +20,7 @@ struct Album: Decodable {
     let id: String
     let name: String
     let artistName: String
-    private let artworkUrl100: String
+    private let artworkUrl100: String?
     let genres: [Genre]
     let releaseDate: String?
     let copyright: String?
@@ -34,8 +36,10 @@ struct Album: Decodable {
     }
 
     var artworkUrl: URL? {
-        URL(string: artworkUrl100)
+        guard let artworkUrl100 = artworkUrl100 else { return nil }
+        return URL(string: artworkUrl100)
     }
+
 }
 
 struct Genre: Decodable {

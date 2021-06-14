@@ -13,13 +13,12 @@ extension UIImage {
         let task = URLSession.shared.dataTask(with: url) { data, response, error in
              DispatchQueue.main.async {
                 guard error == nil,
-                      let data = data else {
-                    let configuration = UIImage.SymbolConfiguration(pointSize: 25)
-                    let image = UIImage(systemName: "xmark.icloud", withConfiguration: configuration)
-                    completion(image, error)
+                      let data = data,
+                      let image = UIImage(data: data) else {
+                    completion(nil, error)
                     return
                 }
-                completion(UIImage(data: data), nil)
+                completion(image, nil)
              }
         }
         task.resume()

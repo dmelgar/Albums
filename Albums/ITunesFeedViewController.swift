@@ -7,21 +7,35 @@
 
 import UIKit
 
-class AlbumsViewController: UIViewController {
+class ITunesFeedViewController: UIViewController {
 
-    var albums = [Album]()
+    var feed: Feed?
     var tableView = UITableView()
     var spinner = UIActivityIndicatorView(style: .large)
-
-    let cellIdentifier = "AlbumCell"
-
+    var feedProvider: ITunesFeedProviderProtocol
+    var feedURL: URL?
+    static let defaultFeedURL = URL(string: "https://rss.itunes.apple.com/api/v1/us/itunes-music/top-songs/all/100/explicit.json")
+    
+    // Allow ITunesFeedProvider to be injected for testability
+    init(feedProvider: ITunesFeedProviderProtocol? = nil, feedURL: URL? = defaultFeedURL) {
+        self.feedURL = feedURL
+        self.feedProvider = feedProvider ?? ITunesFeedProvider()
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        self.feedProvider = ITunesFeedProvider()
+        super.init(coder: coder)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         navigationController?.navigationBar.isTranslucent = false
-        title = NSLocalizedString("Top 100 Albums", comment: "Main album list title")
+        navigationController?.navigationBar.backgroundColor = .systemBackground
 
         view = tableView
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: cellIdentifier)
+        tableView.register(ITunesFeedTableViewCell.self, forCellReuseIdentifier: ITunesFeedTableViewCell.cellIdentifier)
         tableView.backgroundColor = .systemBackground
 
         tableView.dataSource = self
@@ -34,7 +48,7 @@ class AlbumsViewController: UIViewController {
         NSLayoutConstraint.activate([view.centerYAnchor.constraint(equalTo: spinner.centerYAnchor),
                                      view.centerXAnchor.constraint(equalTo: spinner.centerXAnchor)])
 
-        loadData(tableView: tableView)
+        loadData()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -43,20 +57,25 @@ class AlbumsViewController: UIViewController {
         }
     }
 
-    func loadData(tableView: UITableView) {
+    func loadData() {
+        guard let feedURL = feedURL else { return }
         spinner.startAnimating()
-        AlbumsProvider.load { albums, error in
+        feedProvider.load(url: feedURL) { feed, error in
             guard error == nil,
-                  let albums = albums else {
-                self.displayError(NSLocalizedString("Error loading albums. \(error?.localizedDescription ?? "")", comment: "Error message"), displayAction: false)
+                  let feed = feed else {
+                self.displayError(NSLocalizedString("Error loading albums. \(error?.localizedDescription ?? "")", comment: "Error message"), displayAction: true)
                 return
             }
-            self.albums = albums
-            tableView.reloadData()
+            self.feed = feed
+            self.title = feed.title
+            self.tableView.reloadData()
             self.spinner.stopAnimating()
         }
     }
+}
 
+// Error handling
+extension ITunesFeedViewController {
     func displayError(_ txt: String, displayAction: Bool) {
         let alert = UIAlertController(title: NSLocalizedString("Error", comment: "Error title"),
                                       message: txt, preferredStyle: .alert)
@@ -64,46 +83,27 @@ class AlbumsViewController: UIViewController {
             alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "Default action"),
                                           style: .default, handler: { action in
                 // Retry loading data
-                self.loadData(tableView: self.tableView)
+                self.loadData()
             }))
         }
         self.present(alert, animated: true, completion: nil)
     }
 }
 
-extension AlbumsViewController: UITableViewDataSource {
+extension ITunesFeedViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier) else {
+        
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: ITunesFeedTableViewCell.cellIdentifier) as? ITunesFeedTableViewCell,
+              let album = feed?.results[indexPath.row] else {
             displayError(NSLocalizedString("Unrecoverable error", comment: "Internal error"), displayAction: false)
             return UITableViewCell()
         }
-        var content = cell.defaultContentConfiguration()
-
-        content.imageProperties.reservedLayoutSize = CGSize(width: 40, height: 40)
-        content.imageProperties.maximumSize = CGSize(width: 50, height: 50)
-
-        let album = albums[indexPath.row]
-        cell.tag = album.idInt()
-        content.text = album.name
-        content.secondaryText = album.artistName
-        content.image = UIImage()
-
-        if let artworkUrl = album.artworkUrl {
-            UIImage.asyncLoad(url: artworkUrl) { image, error in
-                // Check to make sure cell hasn't been reused while waiting to load image
-                guard cell.tag == album.idInt() else { return }
-                content.image = image
-                cell.contentConfiguration = content
-            }
-        }
-
-        cell.contentConfiguration = content
+        cell.update(album: album)
         return cell
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return albums.count
+        return feed?.results.count ?? 0
     }
 
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -111,10 +111,10 @@ extension AlbumsViewController: UITableViewDataSource {
     }
 }
 
-extension AlbumsViewController: UITableViewDelegate {
+extension ITunesFeedViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let nextVC = AlbumDetailViewController()
-        nextVC.loadData(album: albums[indexPath.row])
+        guard let album = feed?.results[indexPath.row] else { return }
+        let nextVC = AlbumDetailViewController(album: album)
         navigationController?.pushViewController(nextVC, animated: true)
     }
 }
